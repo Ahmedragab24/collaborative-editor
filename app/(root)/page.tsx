@@ -1,21 +1,22 @@
-import AddDocumentBtn from '@/components/AddDocumentBtn';
-import { DeleteModal } from '@/components/DeleteModal';
-import Header from '@/components/Header'
-import Notifications from '@/components/Notifications';
-import { Button } from '@/components/ui/button'
-import { getDocuments } from '@/lib/actions/room.actions';
-import { dateConverter } from '@/lib/utils';
-import { SignedIn, UserButton } from '@clerk/nextjs'
-import { currentUser } from '@clerk/nextjs/server';
-import Image from 'next/image';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import AddDocumentBtn from "@/components/AddDocumentBtn";
+import { DeleteModal } from "@/components/DeleteModal";
+import Header from "@/components/Header";
+import Notifications from "@/components/Notifications";
+import { getDocuments } from "@/lib/actions/room.actions";
+import { dateConverter } from "@/lib/utils";
+import { SignedIn, UserButton } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
+import Image from "next/image";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 const Home = async () => {
   const clerkUser = await currentUser();
-  if(!clerkUser) redirect('/sign-in');
+  if (!clerkUser) redirect("/sign-in");
 
-  const roomDocuments = await getDocuments(clerkUser.emailAddresses[0].emailAddress);
+  const roomDocuments = await getDocuments(
+    clerkUser.emailAddresses[0].emailAddress
+  );
 
   return (
     <main className="home-container">
@@ -32,7 +33,7 @@ const Home = async () => {
         <div className="document-list-container">
           <div className="document-list-title">
             <h3 className="text-28-semibold">All documents</h3>
-            <AddDocumentBtn 
+            <AddDocumentBtn
               userId={clerkUser.id}
               email={clerkUser.emailAddresses[0].emailAddress}
             />
@@ -40,9 +41,11 @@ const Home = async () => {
           <ul className="document-ul">
             {roomDocuments.data.map(({ id, metadata, createdAt }: any) => (
               <li key={id} className="document-list-item">
-                <Link href={`/documents/${id}`} className="flex flex-1 items-center gap-4">
+                <Link
+                  href={`/documents/${id}`}
+                  className="flex flex-1 items-center gap-4">
                   <div className="hidden rounded-md bg-dark-500 p-2 sm:block">
-                    <Image 
+                    <Image
                       src="/assets/icons/doc.svg"
                       alt="file"
                       width={40}
@@ -51,7 +54,9 @@ const Home = async () => {
                   </div>
                   <div className="space-y-1">
                     <p className="line-clamp-1 text-lg">{metadata.title}</p>
-                    <p className="text-sm font-light text-blue-100">Created about {dateConverter(createdAt)}</p>
+                    <p className="text-sm font-light text-blue-100">
+                      Created about {dateConverter(createdAt)}
+                    </p>
                   </div>
                 </Link>
                 <DeleteModal roomId={id} />
@@ -59,9 +64,9 @@ const Home = async () => {
             ))}
           </ul>
         </div>
-      ): (
+      ) : (
         <div className="document-list-empty">
-          <Image 
+          <Image
             src="/assets/icons/doc.svg"
             alt="Document"
             width={40}
@@ -69,14 +74,14 @@ const Home = async () => {
             className="mx-auto"
           />
 
-          <AddDocumentBtn 
+          <AddDocumentBtn
             userId={clerkUser.id}
             email={clerkUser.emailAddresses[0].emailAddress}
           />
         </div>
       )}
     </main>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
